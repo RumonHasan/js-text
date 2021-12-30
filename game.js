@@ -5,7 +5,7 @@ let state= {}; // main state object
 
 const startGame = () => {   
     state = {}
-    showTextNode(1);
+    showTextNode(1); // initializing with one in order to start from the first index
 }
 
 const showTextNode = (textNodeIndex)=>{
@@ -15,10 +15,12 @@ const showTextNode = (textNodeIndex)=>{
     // removing all the options 
     while(optionButtonElement.firstChild){
         optionButtonElement.removeChild(optionButtonElement.firstChild);
-    }
+    } // removing the temporary buttons 
+
     // getting the answer buttons
     texts.options?.forEach(option=>{
-        if(showOption(option)){
+        console.log(showOption(option), state);
+        if(showOption(option)){ // filtering the answers based on whether there is a setstate present or not 
             const button = document.createElement('button');
             button.innerText = option.text;
             button.classList.add('btn');
@@ -29,13 +31,18 @@ const showTextNode = (textNodeIndex)=>{
         }
     })
 }
-
+// returning true or false based on teh required state
 const showOption = (option)=>{
-    return option.requiredState == null || option.requiredState(state)
+    return option.requiredState == null || option.requiredState(state);
 }
 
 const selectOption = (option)=>{
     const nextTextNodeId = option.nextText;
+    if(nextTextNodeId <=0){
+        return startGame();
+    }
+    state = Object.assign(state, option.setState);
+    showTextNode(nextTextNodeId); // moves to the next text node
 }
 
 const textNodes = [
@@ -79,6 +86,16 @@ const textNodes = [
                 text:'Ignore the beast',
                 nextText: 3
                 
+            }
+        ]
+    },
+    {
+        id: 3,
+        text:'You are tired just leave the world man',
+        options: [
+            {
+                text: 'Find a place where you can drop dead at:',
+                nextText: -1
             }
         ]
     }
